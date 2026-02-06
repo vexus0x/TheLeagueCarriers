@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W3B LEAP | THE PLAGUE HUB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        brushed: ['Permanent Marker', 'cursive'],
+                    },
+                    colors: {
+                        plague: '#B6FF91', // Light Lime for Headlines
+                        plagueDark: '#72B467', // Button Green
+                        brick: '#080808',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            overflow-x: hidden;
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://www.transparenttextures.com/patterns/black-brick-wall.png");
+            background-attachment: fixed;
+        }
+
+        .brushed-text {
+            font-family: 'Permanent Marker', cursive;
+            letter-spacing: 0.02em;
+        }
+
+        .plague-button {
+            background-color: #72B467;
+            color: #000000;
+            font-family: 'Permanent Marker', cursive;
+            padding: 8px 24px;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .plague-button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .card-glass {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #72B467; border-radius: 4px; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

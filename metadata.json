@@ -1,0 +1,7 @@
+{
+  "name": "W3b Leap | The Plague Hub",
+  "description": "A voluntary work hub for The Plague NFT community. Leap forward by contributing skills, joining workgroups, and learning in the trenches of Web3.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
