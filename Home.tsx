@@ -64,8 +64,22 @@ const Home: React.FC<HomeProps> = ({
     });
   };
 
-  const closeModal = () => {
+  const closeProposalModal = () => {
+    setIsProposalModalOpen(false);
+    setEditingProject(null);
+  };
+
+  const closeVotersModal = () => {
     setModalInfo({ isOpen: false, type: null, projectId: null, userIds: [], title: '' });
+  };
+
+  const closeModal = () => {
+    if (isProposalModalOpen) {
+      closeProposalModal();
+    }
+    if (modalInfo.isOpen) {
+      closeVotersModal();
+    }
   };
 
   // Form state
@@ -109,24 +123,6 @@ const Home: React.FC<HomeProps> = ({
   const handleEdit = (project: Project) => {
     setEditingProject(project);
     setIsProposalModalOpen(true);
-  };
-
-  const closeProposalModal = () => {
-    setIsProposalModalOpen(false);
-    setEditingProject(null);
-  };
-
-  const closeVotersModal = () => {
-    setModalInfo({ isOpen: false, type: null, projectId: null, userIds: [], title: '' });
-  };
-
-  const closeModal = () => {
-    if (isProposalModalOpen) {
-      closeProposalModal();
-    }
-    if (modalInfo.isOpen) {
-      closeVotersModal();
-    }
   };
 
   const handleSubmitProposal = (e: React.FormEvent) => {
