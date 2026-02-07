@@ -273,13 +273,84 @@ const Home: React.FC<HomeProps> = ({
           </div>
         )}
 
-        {/* Full Grid View */}
+        {/* Full Grid View with Filters */}
         {showAllMembers && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {members.map(member => (
-              <MemberCard key={member.id} member={member} onEndorse={onEndorse} />
-            ))}
-          </div>
+          <>
+            {/* Filters */}
+            <div className="bg-white/5 rounded-xl border border-white/10 p-4 space-y-4">
+              <div className="flex items-center gap-2 text-plague text-xs font-bold uppercase tracking-widest">
+                <Settings2 className="w-4 h-4" />
+                <span>Filter Frogs</span>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input 
+                    type="text" 
+                    placeholder="Search by name..."
+                    className="w-full bg-black border border-white/10 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-plague focus:ring-0"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                
+                {/* Skill Filter */}
+                <select 
+                  value={selectedSkill}
+                  onChange={(e) => setSelectedSkill(e.target.value as any)}
+                  className="bg-black border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:border-plague focus:ring-0 cursor-pointer appearance-none"
+                >
+                  <option value="" className="bg-black">All Skills</option>
+                  {SKILL_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-black">{opt}</option>)}
+                </select>
+                
+                {/* Workgroup Filter */}
+                <select 
+                  value={selectedWorkgroup}
+                  onChange={(e) => setSelectedWorkgroup(e.target.value as any)}
+                  className="bg-black border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:border-plague focus:ring-0 cursor-pointer appearance-none"
+                >
+                  <option value="" className="bg-black">All Workgroups</option>
+                  {WORKGROUP_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-black">{opt}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Filtered Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {members
+                .filter(m => {
+                  const matchesSearch = searchQuery === '' || 
+                    m.name.toLowerCase().includes(searchQuery.toLowerCase());
+                  const matchesSkill = selectedSkill === '' || 
+                    m.skills.some(s => s.name === selectedSkill);
+                  const matchesWorkgroup = selectedWorkgroup === '' || 
+                    m.workgroups.includes(selectedWorkgroup);
+                  return matchesSearch && matchesSkill && matchesWorkgroup;
+                })
+                .map(member => (
+                  <MemberCard key={member.id} member={member} onEndorse={onEndorse} />
+                ))
+              }
+            </div>
+            
+            {/* No Results */}
+            {members.filter(m => {
+              const matchesSearch = searchQuery === '' || 
+                m.name.toLowerCase().includes(searchQuery.toLowerCase());
+              const matchesSkill = selectedSkill === '' || 
+                m.skills.some(s => s.name === selectedSkill);
+              const matchesWorkgroup = selectedWorkgroup === '' || 
+                m.workgroups.includes(selectedWorkgroup);
+              return matchesSearch && matchesSkill && matchesWorkgroup;
+            }).length === 0 && (
+              <div className="text-center py-12 text-white/40 font-brushed">
+                No frogs match your filters
+              </div>
+            )}
+          </>
         )}
       </section>
 
