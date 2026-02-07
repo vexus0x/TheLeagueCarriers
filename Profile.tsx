@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Twitter, Save, User, Sparkles, CheckCircle2, ShieldHalf, Plus, X, Tag } from 'lucide-react';
-import { UserState, Member, SkillType, WorkgroupType, Skill } from '../types';
-import { SKILL_OPTIONS, WORKGROUP_OPTIONS } from '../constants';
+import { UserState, Member, SkillType, WorkgroupType, Skill } from './types';
+import { SKILL_OPTIONS, WORKGROUP_OPTIONS } from './constants';
 
 interface ProfileProps { 
   user: UserState; 
