@@ -106,11 +106,6 @@
             display: none;
         }
 
-        /* Safe area insets for mobile */
-        .pb-safe {
-            padding-bottom: env(safe-area-inset-bottom, 20px);
-        }
-
         /* Touch-friendly spacing */
         @media (max-width: 768px) {
             button, a, input, select, textarea {
@@ -164,11 +159,9 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body class="min-h-screen">
     <div id="root" class="min-h-screen"></div>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
-/* Public access fix */
