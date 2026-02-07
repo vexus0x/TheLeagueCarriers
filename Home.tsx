@@ -111,9 +111,22 @@ const Home: React.FC<HomeProps> = ({
     setIsProposalModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeProposalModal = () => {
     setIsProposalModalOpen(false);
     setEditingProject(null);
+  };
+
+  const closeVotersModal = () => {
+    setModalInfo({ isOpen: false, type: null, projectId: null, userIds: [], title: '' });
+  };
+
+  const closeModal = () => {
+    if (isProposalModalOpen) {
+      closeProposalModal();
+    }
+    if (modalInfo.isOpen) {
+      closeVotersModal();
+    }
   };
 
   const handleSubmitProposal = (e: React.FormEvent) => {
@@ -541,7 +554,7 @@ const Home: React.FC<HomeProps> = ({
       {/* Voters/Enlisters Modal */}
       <VotersEnlistersModal
         isOpen={modalInfo.isOpen}
-        onClose={closeModal}
+        onClose={closeVotersModal}
         title={modalInfo.title}
         members={members}
         userIds={modalInfo.userIds}
