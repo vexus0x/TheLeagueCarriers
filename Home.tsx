@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Users, Activity, Target, MessageSquareCode, Plus, X, Calendar, Infinity, Briefcase, Settings2, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import MemberCard from './MemberCard';
 import ProjectCard from './ProjectCard';
+import VotersEnlistersModal from './VotersEnlistersModal';
 import { Member, Project, SkillType, WorkgroupType, UserState } from './types';
 import { SKILL_OPTIONS, WORKGROUP_OPTIONS } from './constants';
 
@@ -32,6 +33,40 @@ const Home: React.FC<HomeProps> = ({
   const [showFilters, setShowFilters] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [showAllMembers, setShowAllMembers] = useState(false);
+  
+  // Voters/Enlisters Modal State
+  const [modalInfo, setModalInfo] = useState<{
+    isOpen: boolean;
+    type: 'voters' | 'enlisters' | null;
+    projectId: string | null;
+    userIds: string[];
+    title: string;
+  }>({ isOpen: false, type: null, projectId: null, userIds: [], title: '' });
+
+  const handleShowVoters = (projectId: string, voterIds: string[]) => {
+    const project = projects.find(p => p.id === projectId);
+    setModalInfo({
+      isOpen: true,
+      type: 'voters',
+      projectId,
+      userIds: voterIds,
+      title: `Voted by (${voterIds.length})`
+    });
+  };
+
+  const handleShowEnlisters = (projectId: string, enlistersIds: string[]) => {
+    setModalInfo({
+      isOpen: true,
+      type: 'enlisters',
+      projectId,
+      userIds: enlistersIds,
+      title: `Enlisted (${enlistersIds.length})`
+    });
+  };
+
+  const closeModal = () => {
+    setModalInfo({ isOpen: false, type: null, projectId: null, userIds: [], title: '' });
+  };
 
   // Form state
   const [proposalTitle, setProposalTitle] = useState('');
@@ -170,6 +205,8 @@ const Home: React.FC<HomeProps> = ({
               onUpvote={onUpvote} 
               onEnlist={onEnlist}
               onEdit={handleEdit}
+              onShowVoters={() => handleShowVoters(project.id, project.upvoterIds)}
+              onShowEnlisters={() => handleShowEnlisters(project.id, project.enlistedIds)}
               members={members}
               currentUser={user}
             />
@@ -500,6 +537,16 @@ const Home: React.FC<HomeProps> = ({
           </div>
         </div>
       )}
+
+      {/* Voters/Enlisters Modal */}
+      <VotersEnlistersModal
+        isOpen={modalInfo.isOpen}
+        onClose={closeModal}
+        title={modalInfo.title}
+        members={members}
+        userIds={modalInfo.userIds}
+        emptyMessage="No one yet"
+      />
     </div>
   );
 };

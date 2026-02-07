@@ -7,11 +7,22 @@ interface ProjectCardProps {
   onUpvote: (pid: string) => void;
   onEnlist: (pid: string) => void;
   onEdit?: (project: Project) => void;
+  onShowVoters?: () => void;
+  onShowEnlisters?: () => void;
   members: Member[];
   currentUser: UserState;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpvote, onEnlist, onEdit, members, currentUser }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ 
+  project, 
+  onUpvote, 
+  onEnlist, 
+  onEdit,
+  onShowVoters,
+  onShowEnlisters,
+  members, 
+  currentUser 
+}) => {
   const author = members.find(m => m.id === project.elderId);
   const hasVoted = currentUser.isLoggedIn && project.upvoterIds.includes(currentUser.member?.id || '');
   const isEnlisted = currentUser.isLoggedIn && project.enlistedIds.includes(currentUser.member?.id || '');
@@ -78,8 +89,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpvote, onEnlist, 
               </div>
             )}
 
-            {/* Enlisted */}
-            {project.enlistedIds.length > 0 && (
+            {/* Enlisted - Clickable */}
+            {project.enlistedIds.length > 0 && onShowEnlisters && (
+              <button 
+                onClick={onShowEnlisters}
+                className="flex items-center gap-1 hover:text-plague transition-colors"
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>{project.enlistedIds.length} enlisted</span>
+              </button>
+            )}
+            
+            {/* Enlisted - Non-clickable fallback */}
+            {project.enlistedIds.length > 0 && !onShowEnlisters && (
               <div className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" />
                 <span>{project.enlistedIds.length} enlisted</span>
