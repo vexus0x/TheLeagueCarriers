@@ -64,9 +64,9 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout }) => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button - Always visible on mobile */}
         <button 
-          className="md:hidden text-white"
+          className="text-white p-2 hover:text-plague transition-colors"
           onClick={() => setIsMobileMenuOpen(true)}
         >
           <Menu className="w-8 h-8" />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Users, Activity, Target, MessageSquareCode, Plus, X, Calendar, Infinity, Briefcase, Settings2, ChevronDown } from 'lucide-react';
+import { Search, Users, Activity, Target, MessageSquareCode, Plus, X, Calendar, Infinity, Briefcase, Settings2, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import MemberCard from './MemberCard';
 import ProjectCard from './ProjectCard';
 import { Member, Project, SkillType, WorkgroupType, UserState } from './types';
@@ -30,6 +30,8 @@ const Home: React.FC<HomeProps> = ({
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [showAllMembers, setShowAllMembers] = useState(false);
 
   // Form state
   const [proposalTitle, setProposalTitle] = useState('');
@@ -182,107 +184,103 @@ const Home: React.FC<HomeProps> = ({
         </div>
       </section>
 
-      {/* Swamp Grid */}
+      {/* Featured Members Carousel */}
       <section className="max-w-6xl mx-auto px-4 space-y-6">
-        {/* Filter Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-3">
-            <Target className="w-6 h-6 md:w-8 md:h-8 text-plague" />
-            <h2 className="text-2xl md:text-3xl lg:text-5xl font-brushed text-white uppercase">Swamp</h2>
-            <div className="text-plagueDark font-brushed text-sm md:text-base hidden sm:block">
-              {members.length} Active
-            </div>
+            <Users className="w-6 h-6 md:w-8 md:h-8 text-plague" />
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-brushed text-white uppercase">
+              {showAllMembers ? 'All Frogs' : 'Featured Frogs'}
+            </h2>
           </div>
-
-          {/* Mobile Filter Toggle */}
-          <button 
-            className="lg:hidden flex items-center gap-2 text-white/60 text-sm"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Settings2 className="w-4 h-4" />
-            <span>Filters</span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-          </button>
-
-          {/* Desktop Filters */}
-          <div className="hidden lg:flex items-center gap-4 flex-1 lg:max-w-2xl">
-            <div className="relative flex-1 group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-plagueDark group-focus-within:text-plague transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Search frogs..."
-                className="w-full bg-black border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:border-plague focus:ring-0 text-white placeholder:text-white/20 transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <select 
-              value={selectedSkill}
-              onChange={(e) => setSelectedSkill(e.target.value as any)}
-              className="bg-black border border-white/10 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest text-plagueDark focus:border-plague focus:ring-0 cursor-pointer appearance-none"
+          
+          {!showAllMembers && (
+            <button 
+              onClick={() => setShowAllMembers(true)}
+              className="plague-button flex items-center gap-2 text-xs md:text-sm"
             >
-              <option value="" className="bg-black">All Skills</option>
-              {SKILL_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-black">{opt}</option>)}
-            </select>
-
-            <select 
-              value={selectedWorkgroup}
-              onChange={(e) => setSelectedWorkgroup(e.target.value as any)}
-              className="bg-black border border-white/10 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest text-plagueDark focus:border-plague focus:ring-0 cursor-pointer appearance-none"
-            >
-              <option value="" className="bg-black">All Workgroups</option>
-              {WORKGROUP_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-black">{opt}</option>)}
-            </select>
-          </div>
+              <span>Explore All {members.length} Frogs</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        {/* Mobile Filters (collapsible) */}
-        {showFilters && (
-          <div className="lg:hidden space-y-3 pb-4">
-            <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-plagueDark" />
-              <input 
-                type="text" 
-                placeholder="Search frogs..."
-                className="w-full bg-black border border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/20"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <select 
-                value={selectedSkill}
-                onChange={(e) => setSelectedSkill(e.target.value as any)}
-                className="flex-1 bg-black border border-white/10 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-plagueDark"
-              >
-                <option value="" className="bg-black">All Skills</option>
-                {SKILL_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-black">{opt}</option>)}
-              </select>
-
-              <select 
-                value={selectedWorkgroup}
-                onChange={(e) => setSelectedWorkgroup(e.target.value as any)}
-                className="flex-1 bg-black border border-white/10 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-plagueDark"
-              >
-                <option value="" className="bg-black">All Workgroups</option>
-                {WORKGROUP_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-black">{opt}</option>)}
-              </select>
-            </div>
+        {/* Show All Toggle - when viewing all */}
+        {showAllMembers && (
+          <div className="flex justify-end">
+            <button 
+              onClick={() => { setShowAllMembers(false); setCarouselIndex(0); }}
+              className="text-plague hover:text-white text-sm font-bold uppercase tracking-widest flex items-center gap-2"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back to Carousel
+            </button>
           </div>
         )}
 
-        {/* Members Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {members.length > 0 ? members.map(member => (
-            <MemberCard key={member.id} member={member} onEndorse={onEndorse} />
-          )) : (
-            <div className="col-span-full py-12 md:py-16 text-center text-white/20 font-brushed text-lg md:text-xl uppercase border border-dashed border-white/10 rounded-2xl">
-              No matching frogs found in this sector.
+        {/* Carousel View */}
+        {!showAllMembers && (
+          <div className="relative">
+            {/* Carousel Container */}
+            <div className="overflow-hidden">
+              <div 
+                className="flex transition-transform duration-300 ease-out gap-4 md:gap-6"
+                style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
+              >
+                {members.map((member) => (
+                  <div key={member.id} className="flex-none w-[280px] md:w-[320px]">
+                    <MemberCard member={member} onEndorse={onEndorse} />
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Carousel Controls */}
+            {members.length > 3 && (
+              <>
+                <button 
+                  onClick={() => setCarouselIndex(Math.max(0, carouselIndex - 1))}
+                  disabled={carouselIndex === 0}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-white/20 rounded-full flex items-center justify-center text-plague hover:bg-plague hover:text-black transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                </button>
+                <button 
+                  onClick={() => setCarouselIndex(Math.min(members.length - 3, carouselIndex + 1))}
+                  disabled={carouselIndex >= members.length - 3}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-10 h-10 md:w-12 bg-black/80 md:h-12 border border-white/20 rounded-full flex items-center justify-center text-plague hover:bg-plague hover:text-black transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                </button>
+              </>
+            )}
+
+            {/* Dots Indicator */}
+            {members.length > 3 && (
+              <div className="flex justify-center gap-2 mt-6">
+                {Array.from({ length: Math.max(1, members.length - 2) }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCarouselIndex(i)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      i === carouselIndex ? 'bg-plague w-6' : 'bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Full Grid View */}
+        {showAllMembers && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {members.map(member => (
+              <MemberCard key={member.id} member={member} onEndorse={onEndorse} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Proposal Modal */}
