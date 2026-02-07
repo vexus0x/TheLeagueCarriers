@@ -1,9 +1,9 @@
 
 import React, { useState, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Profile from './pages/Profile';
+import Navbar from './Navbar';
+import Home from './Home';
+import Profile from './Profile';
 import { Member, Project, UserState, SkillType, WorkgroupType } from './types';
 import { MOCK_MEMBERS, MOCK_PROJECTS } from './constants';
 
