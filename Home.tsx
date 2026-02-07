@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Users, Activity, Target, MessageSquareCode, Plus, X, Calendar, Infinity, Briefcase, Settings2, ChevronDown, ChevronLeft, ChevronRight, ArrowRight, Clock, TrendingUp, UserPlus, ThumbsUp } from 'lucide-react';
 import MemberCard from './MemberCard';
 import ProjectCard from './ProjectCard';
@@ -18,6 +18,9 @@ interface ActivityItem {
   timestamp: Date;
 }
 
+type SortOption = 'recent' | 'votes' | 'enlistments';
+type ActiveTab = 'Proposal' | 'Live' | 'Ended';
+
 interface HomeProps {
   user: UserState;
   members: Member[];
@@ -28,20 +31,20 @@ interface HomeProps {
   setSelectedSkill: (skill: SkillType | '') => void;
   selectedWorkgroup: WorkgroupType | '';
   setSelectedWorkgroup: (wg: WorkgroupType | '') => void;
+  activeTab: ActiveTab;
+  setActiveTab: (tab: ActiveTab) => void;
   onEndorse: (mid: string, sname: string) => void;
   onUpvote: (pid: string) => void;
   onEnlist: (pid: string) => void;
   onAddProject: (p: Partial<Project>) => void;
 }
 
-type SortOption = 'recent' | 'votes' | 'enlistments';
-
 const Home: React.FC<HomeProps> = ({ 
   user, members, projects, searchQuery, setSearchQuery, 
   selectedSkill, setSelectedSkill, selectedWorkgroup, setSelectedWorkgroup,
+  activeTab, setActiveTab,
   onEndorse, onUpvote, onEnlist, onAddProject
 }) => {
-  const [activeTab, setActiveTab] = useState<'Live' | 'Proposal' | 'Ended'>('Proposal');
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);

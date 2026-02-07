@@ -1,16 +1,19 @@
-
 import React, { useState, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
+import BottomNav from './BottomNav';
 import Home from './Home';
 import Profile from './Profile';
 import { Member, Project, UserState, SkillType, WorkgroupType } from './types';
 import { MOCK_MEMBERS, MOCK_PROJECTS } from './constants';
 
+type ActiveTab = 'Proposal' | 'Live' | 'Ended';
+
 const App: React.FC = () => {
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS);
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
   const [user, setUser] = useState<UserState>({ isLoggedIn: false });
+  const [activeTab, setActiveTab] = useState<ActiveTab>('Proposal');
   
   // Filtering States
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,7 +21,6 @@ const App: React.FC = () => {
   const [selectedWorkgroup, setSelectedWorkgroup] = useState<WorkgroupType | ''>('');
 
   const login = () => {
-    // For testing: Log in as Doctor Vile (Elder) to see the Proposal Form
     const elderUser = MOCK_MEMBERS.find(m => m.role === 'Elder') || MOCK_MEMBERS[0];
     
     setUser({
@@ -70,10 +72,8 @@ const App: React.FC = () => {
       if (p.id === projectId) {
         const hasVoted = p.upvoterIds.includes(user.member!.id);
         if (hasVoted) {
-          // Retrieve vote
           return { ...p, upvoterIds: p.upvoterIds.filter(id => id !== user.member!.id) };
         } else {
-          // Add vote
           return { ...p, upvoterIds: [...p.upvoterIds, user.member!.id] };
         }
       }
@@ -107,11 +107,9 @@ const App: React.FC = () => {
     if (!user.member) return;
     
     if (projectData.id) {
-      // Edit existing
       setProjects(prev => prev.map(p => p.id === projectData.id ? { ...p, ...projectData } : p));
       alert("OPERATION_MODIFIED. INTEL_UPDATED.");
     } else {
-      // Create new
       const newProject: Project = {
         id: `P${projects.length + 1}`,
         title: projectData.title || 'Untitled Proposal',
@@ -135,9 +133,16 @@ const App: React.FC = () => {
     }
   };
 
+  const scrollToSection = (index: number) => {
+    const sections = document.querySelectorAll('section');
+    if (sections[index]) {
+      sections[index].scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <Router>
-      <div className="min-h-screen">
+      <div className="min-h-screen pb-20 md:pb-0">
         <Navbar 
           user={user} 
           onLogin={login} 
@@ -157,6 +162,8 @@ const App: React.FC = () => {
                 setSelectedSkill={setSelectedSkill}
                 selectedWorkgroup={selectedWorkgroup}
                 setSelectedWorkgroup={setSelectedWorkgroup}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
                 onEndorse={handleEndorse}
                 onUpvote={handleUpvote}
                 onEnlist={handleEnlist}
@@ -173,7 +180,14 @@ const App: React.FC = () => {
           </Routes>
         </main>
 
-        <footer className="py-12 text-center text-white/20 mt-20 font-brushed uppercase tracking-widest text-xs">
+        {/* Mobile Bottom Navigation */}
+        <BottomNav 
+          user={user}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+
+        <footer className="hidden md:block py-12 text-center text-white/20 font-brushed uppercase tracking-widest text-xs">
           <p>© 2024 The Plague Collective. Stay Infected.</p>
         </footer>
       </div>
