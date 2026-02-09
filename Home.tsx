@@ -6,6 +6,7 @@ import VotersEnlistersModal from './VotersEnlistersModal';
 import MemberDetailModal from './MemberDetailModal';
 import { Member, Project, SkillType, WorkgroupType, UserState } from './types';
 import { SKILL_OPTIONS, WORKGROUP_OPTIONS } from './constants';
+import ContagionMeter from './components/ContagionMeter';
 
 // Activity types
 interface ActivityItem {
@@ -227,19 +228,19 @@ const Home: React.FC<HomeProps> = ({
               onClick={() => setActiveTab('Proposal')}
               className={`text-xl md:text-3xl lg:text-4xl font-brushed uppercase transition-all whitespace-nowrap ${activeTab === 'Proposal' ? 'text-plague' : 'text-white/40 hover:text-white'}`}
             >
-              Proposals
+              Incubations
             </button>
             <button 
               onClick={() => setActiveTab('Live')}
               className={`text-xl md:text-3xl lg:text-4xl font-brushed uppercase transition-all whitespace-nowrap ${activeTab === 'Live' ? 'text-plague' : 'text-white/40 hover:text-white'}`}
             >
-              Live
+              Active Infections
             </button>
             <button 
               onClick={() => setActiveTab('Ended')}
               className={`text-xl md:text-3xl lg:text-4xl font-brushed uppercase transition-all whitespace-nowrap ${activeTab === 'Ended' ? 'text-plague' : 'text-white/40 hover:text-white'}`}
             >
-              Archive
+              Cured
             </button>
           </div>
 
@@ -273,7 +274,7 @@ const Home: React.FC<HomeProps> = ({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <input 
               type="text"
-              placeholder="Search proposals..."
+              placeholder="Search incubations..."
               value={proposalSearch}
               onChange={(e) => setProposalSearch(e.target.value)}
               className="w-full bg-black border border-white/10 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-plague focus:ring-0"
@@ -287,30 +288,37 @@ const Home: React.FC<HomeProps> = ({
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="bg-black border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:border-plague focus:ring-0 cursor-pointer appearance-none"
             >
-              <option value="recent" className="bg-black">Recent</option>
-              <option value="votes" className="bg-black">Most Voted</option>
-              <option value="enlistments" className="bg-black">Most Enlisted</option>
+              <option value="recent" className="bg-black">Freshest</option>
+              <option value="votes" className="bg-black">Most Contagious</option>
+              <option value="enlistments" className="bg-black">Most Infected</option>
             </select>
           </div>
         </div>
 
         {/* Activity Feed Sidebar (collapsible) */}
         {showActivityFeed && (
-          <div className="bg-white/5 rounded-xl border border-white/10 p-4">
-            <h3 className="text-sm font-bold text-plagueDark uppercase tracking-widest mb-3 flex items-center gap-2">
-              <Activity className="w-4 h-4" />
-              Recent Activity
-            </h3>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {activities.map(activity => (
-                <div key={activity.id} className="flex items-center gap-3 text-sm p-2 rounded-lg hover:bg-white/5 transition-colors">
-                  <div className="shrink-0">{getActivityIcon(activity.type)}</div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-white/80 truncate">{getActivityText(activity)}</span>
-                  </div>
-                  <span className="text-xs text-white/30 shrink-0">{formatTime(activity.timestamp)}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <div className="bg-white/5 rounded-xl border border-white/10 p-4">
+                <h3 className="text-sm font-bold text-plagueDark uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  Recent Activity
+                </h3>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {activities.map(activity => (
+                    <div key={activity.id} className="flex items-center gap-3 text-sm p-2 rounded-lg hover:bg-white/5 transition-colors">
+                      <div className="shrink-0">{getActivityIcon(activity.type)}</div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-white/80 truncate">{getActivityText(activity)}</span>
+                      </div>
+                      <span className="text-xs text-white/30 shrink-0">{formatTime(activity.timestamp)}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            </div>
+            <div>
+              <ContagionMeter members={members} projects={projects} />
             </div>
           </div>
         )}
@@ -333,7 +341,7 @@ const Home: React.FC<HomeProps> = ({
             <div className="flex flex-col items-center justify-center py-12 md:py-20 bg-white/5 rounded-2xl border border-dashed border-white/10">
               <Activity className="w-8 h-8 md:w-12 md:h-12 text-white/20 mb-3" />
               <p className="text-base md:text-xl text-white/40 font-brushed uppercase">
-                No {activeTab === 'Ended' ? 'archived' : activeTab.toLowerCase()} operations found
+                No {activeTab === 'Ended' ? 'cured' : activeTab.toLowerCase().replace('active ', '')} infections detected
               </p>
             </div>
           )}
@@ -347,7 +355,7 @@ const Home: React.FC<HomeProps> = ({
           <div className="flex items-center gap-3">
             <Users className="w-6 h-6 md:w-8 md:h-8 text-plague" />
             <h2 className="text-2xl md:text-3xl lg:text-5xl font-brushed text-white uppercase">
-              {showAllMembers ? 'All Frogs' : 'Featured Frogs'}
+              {showAllMembers ? 'All Vectors' : 'Featured Vectors'}
             </h2>
           </div>
           
@@ -356,7 +364,7 @@ const Home: React.FC<HomeProps> = ({
               onClick={() => setShowAllMembers(true)}
               className="plague-button flex items-center gap-2 text-xs md:text-sm"
             >
-              <span>Explore All {members.length} Frogs</span>
+              <span>Catalog All {members.length} Vectors</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -435,7 +443,7 @@ const Home: React.FC<HomeProps> = ({
             <div className="bg-white/5 rounded-xl border border-white/10 p-4 space-y-4">
               <div className="flex items-center gap-2 text-plague text-xs font-bold uppercase tracking-widest">
                 <Settings2 className="w-4 h-4" />
-                <span>Filter Frogs</span>
+                <span>Filter Vectors</span>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -626,7 +634,7 @@ const Home: React.FC<HomeProps> = ({
               </div>
 
               <button type="submit" className="plague-button w-full py-4 text-base md:text-lg flex items-center justify-center gap-2 mt-4">
-                <span>{editingProject ? 'Update Data' : 'Authorize Proposal'}</span>
+                <span>{editingProject ? 'Update Protocol' : 'Release Infection'}</span>
                 {editingProject ? <Activity className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
               </button>
             </form>

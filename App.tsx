@@ -6,10 +6,12 @@ import Home from './Home';
 import Profile from './Profile';
 import { Member, Project, UserState, SkillType, WorkgroupType } from './types';
 import { MOCK_MEMBERS, MOCK_PROJECTS } from './constants';
+import { ToastProvider, useToast } from './components/Toast';
 
 type ActiveTab = 'Proposal' | 'Live' | 'Ended';
 
-const App: React.FC = () => {
+// Inner component that uses toast
+const AppContent: React.FC = () => {
   const [members, setMembers] = useState<Member[]>(MOCK_MEMBERS);
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
   const [user, setUser] = useState<UserState>({ isLoggedIn: false });
@@ -19,6 +21,8 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkill, setSelectedSkill] = useState<SkillType | ''>('');
   const [selectedWorkgroup, setSelectedWorkgroup] = useState<WorkgroupType | ''>('');
+  
+  const { addToast } = useToast();
 
   const login = () => {
     const elderUser = MOCK_MEMBERS.find(m => m.role === 'Elder') || MOCK_MEMBERS[0];
@@ -27,10 +31,12 @@ const App: React.FC = () => {
       isLoggedIn: true,
       member: elderUser
     });
+    addToast('Connected to the swarm.', 'success');
   };
 
   const logout = () => {
     setUser({ isLoggedIn: false });
+    addToast('Disconnected from the hive.', 'info');
   };
 
   const filteredMembers = useMemo(() => {
@@ -60,11 +66,12 @@ const App: React.FC = () => {
       }
       return m;
     }));
+    addToast(`Mutation confirmed: ${skillName}`, 'success');
   };
 
   const handleUpvote = (projectId: string) => {
     if (!user.isLoggedIn || !user.member) {
-      alert("Authenticate to cast your vote.");
+      addToast('Authenticate to spread the contagion.', 'warning');
       return;
     }
     
@@ -83,14 +90,14 @@ const App: React.FC = () => {
 
   const handleEnlist = (projectId: string) => {
     if (!user.isLoggedIn || !user.member) {
-      alert("Authenticate your wallet to enlist in missions.");
+      addToast('Authenticate your wallet to join the swarm.', 'warning');
       return;
     }
     
     setProjects(prev => prev.map(p => {
       if (p.id === projectId) {
         if (p.enlistedIds.includes(user.member!.id)) {
-          alert("You are already enlisted for this operation.");
+          addToast('You are already infected by this strain.', 'info');
           return p;
         }
         return {
@@ -100,7 +107,7 @@ const App: React.FC = () => {
       }
       return p;
     }));
-    alert("ENLISTMENT COMPLETE. PREPARE FOR DEPLOYMENT.");
+    addToast('INFECTION CONFIRMED. PREPARE FOR DEPLOYMENT.', 'success');
   };
 
   const handleAddProject = (projectData: Partial<Project>) => {
@@ -108,7 +115,7 @@ const App: React.FC = () => {
     
     if (projectData.id) {
       setProjects(prev => prev.map(p => p.id === projectData.id ? { ...p, ...projectData } : p));
-      alert("OPERATION_MODIFIED. INTEL_UPDATED.");
+      addToast('PROTOCOL MODIFIED. INTEL UPDATED.', 'success');
     } else {
       const newProject: Project = {
         id: `P${projects.length + 1}`,
@@ -129,7 +136,7 @@ const App: React.FC = () => {
         isOngoing: projectData.isOngoing,
       };
       setProjects(prev => [newProject, ...prev]);
-      alert("PROPOSAL_LOGGED. MISSION_AWAITING_REVIEWS.");
+      addToast('INCUBATION LOGGED. AWAITING REVIEW.', 'success');
     }
   };
 
@@ -141,57 +148,65 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
+    <>
+      <Navbar 
+        user={user} 
+        onLogin={login} 
+        onLogout={logout} 
+      />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Routes>
+          <Route path="/" element={
+            <Home 
+              user={user}
+              members={filteredMembers} 
+              projects={projects} 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              selectedSkill={selectedSkill}
+              setSelectedSkill={setSelectedSkill}
+              selectedWorkgroup={selectedWorkgroup}
+              setSelectedWorkgroup={setSelectedWorkgroup}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              onEndorse={handleEndorse}
+              onUpvote={handleUpvote}
+              onEnlist={handleEnlist}
+              onAddProject={handleAddProject}
+            />
+          } />
+          <Route path="/profile" element={
+            <Profile 
+              user={user} 
+              setMembers={setMembers}
+              setUser={setUser}
+            />
+          } />
+        </Routes>
+      </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav 
+        user={user}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
+
+      <footer className="hidden md:block py-12 text-center text-white/20 font-brushed uppercase tracking-widest text-xs">
+        <p>© 2024 The Plague Collective. Stay Infected.</p>
+      </footer>
+    </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <ToastProvider>
       <div className="min-h-screen pb-20 md:pb-0">
-        <Navbar 
-          user={user} 
-          onLogin={login} 
-          onLogout={logout} 
-        />
-        
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Routes>
-            <Route path="/" element={
-              <Home 
-                user={user}
-                members={filteredMembers} 
-                projects={projects} 
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedSkill={selectedSkill}
-                setSelectedSkill={setSelectedSkill}
-                selectedWorkgroup={selectedWorkgroup}
-                setSelectedWorkgroup={setSelectedWorkgroup}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                onEndorse={handleEndorse}
-                onUpvote={handleUpvote}
-                onEnlist={handleEnlist}
-                onAddProject={handleAddProject}
-              />
-            } />
-            <Route path="/profile" element={
-              <Profile 
-                user={user} 
-                setMembers={setMembers}
-                setUser={setUser}
-              />
-            } />
-          </Routes>
-        </main>
-
-        {/* Mobile Bottom Navigation */}
-        <BottomNav 
-          user={user}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-
-        <footer className="hidden md:block py-12 text-center text-white/20 font-brushed uppercase tracking-widest text-xs">
-          <p>© 2024 The Plague Collective. Stay Infected.</p>
-        </footer>
+        <AppContent />
       </div>
-    </Router>
+    </ToastProvider>
   );
 };
 

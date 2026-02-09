@@ -2,19 +2,57 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# 🐸☠️ The Plague Community Hub
 
-This contains everything you need to run your app locally.
+Welcome to the contagion. A decentralized collaboration engine for **The Plague Collective**.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1qs2vpyot0OQVLSi0_8LBE9aaiyepe8GP
+## 🎮 The Ecosystem
 
-## Run Locally
+- **Incubations** — New proposals brewing in the lab
+- **Active Infections** — Live missions and operations
+- **Cured** — Completed missions (archived)
+- **Vectors** — Community members with specialized skills
 
-**Prerequisites:**  Node.js
+## 🧬 Workgroups
 
+| Workgroup | Description |
+|-----------|-------------|
+| The Lab (Dev) | Smart contracts & infrastructure |
+| The Studio (Art) | Visual design & NFT assets |
+| The Megaphone (Marketing) | Outreach & growth |
+| The Neural Net (AI) | AI-powered tools & automation |
+| The Tower (Lore) | Story & world-building |
+| The Streets (Outreach) | IRL events & partnerships |
+| The Airwaves (Podcast) | Audio content & Frog Tank |
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🚀 Quick Start
+
+**Prerequisites:** Node.js
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## 🛠️ Tech Stack
+
+- React 19 + TypeScript
+- Vite 6
+- React Router
+- Lucide Icons
+
+## 📦 Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com)
+
+The app is configured for Vercel deployment with zero-config setup.
+
+---
+
+> *"Stay infected."* — The Plague Collective
